@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Textifi</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4F46E5;
+      --bg-color: #ffffff;
+      --text-color: #1F2937;
+      --border-color: #D1D5DB;
+      --surface-color: #F9FAFB;
+    }
+
+    body.dark-mode {
+      --bg-color: #1F2937;
+      --text-color: #F3F4F6;
+      --border-color: #4B5563;
+      --surface-color: #374151;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      width: 400px;
+      height: 600px;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .settings-icon {
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+      color: var(--primary-color);
+    }
+    .settings-icon i {
+      font-size: 22px;
+    }
+    .settings-icon:hover {
+      background: rgba(79, 70, 229, 0.1);
+    }
+
+    .main-panel {
+      transition: all 0.3s ease;
+    }
+
+    .upload-panel {
+      margin-bottom: 24px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--surface-color);
+      position: relative;
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    body.dark-mode .drop-zone {
+      background: transparent;
+    }
+    .drop-zone:hover {
+      border-color: var(--primary-color);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    .drop-zone::before {
+      content: "\f574";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 24px;
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .audio-container {
+      margin: 20px 0;
+      width: 100%;
+    }
+    audio {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .spinner {
+      border: 3px solid rgba(79, 70, 229, 0.1);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .result-panel {
+      margin-top: 20px;
+    }
+
+    .result-text-container {
+      position: relative;
+      padding: 15px;
+      border-radius: 8px;
+      background: rgba(79, 70, 229, 0.05);
+      max-height: 250px;
+      overflow-y: auto;
+      width: 90%;
+      margin: 0 auto;
+    }
+    .result-text-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .result-text-container::-webkit-scrollbar-track {
+      background: var(--bg-color);
+      border-radius: 8px;
+    }
+    .result-text-container::-webkit-scrollbar-thumb {
+      background-color: var(--primary-color);
+      border-radius: 8px;
+    }
+
+    .result-text {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 10px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .settings-panel {
+      display: none;
+      transition: all 0.3s ease;
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+
+    .settings-title {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--primary-color);
+      padding-bottom: 8px;
+    }
+
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .settings-item label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .api-input {
+      width: 70%;
+      padding: 8px;
+      border: 1px solid var(--primary-color);
+      border-radius: 6px;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-switch .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-left: 10px;
+    }
+    .toggle-switch .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .toggle-switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    .toggle-switch .switch input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+    .toggle-switch .switch input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">Textifi</div>
+    <div class="settings-icon">
+      <i class="fas fa-cog"></i>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <div class="upload-panel">
+      <div class="drop-zone">
+        Drag & Drop Audio File
+        <div style="font-size: 12px; color: var(--text-color); opacity: 0.7; margin-top: 8px;">
+          Supported formats: MP3, WAV, AAC
+        </div>
+        <input type="file" accept="audio/*" style="display: none">
+      </div>
+      <div class="audio-container"></div>
+      <div class="spinner"></div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-text-container">
+        <div class="result-text"></div>
+        <button class="copy-button">
+          <i class="fas fa-copy"></i>
+          Copy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-panel">
+    <h3 class="settings-title">Settings</h3>
+    <div class="settings-group">
+      <div class="settings-item">
+        <label for="apiKey">OpenAI API Key</label>
+        <input type="password" id="apiKey" class="api-input" placeholder="sk-...">
+      </div>
+      <div class="settings-item">
+        <label>Dark Mode</label>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="darkMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="settings-item">
+        <label>AI Formatting</label>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="aiFormatting">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
